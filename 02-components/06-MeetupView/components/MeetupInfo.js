@@ -1,4 +1,4 @@
-import { defineComponent } from './vendor/vue.esm-browser.js';
+import { defineComponent } from './../vendor/vue.esm-browser.js';
 
 export default defineComponent({
   name: 'MeetupInfo',
@@ -11,6 +11,7 @@ export default defineComponent({
     },
     date: {
       type: Number,
+      default: Number(new Date()),
     },
   },
   computed: {
