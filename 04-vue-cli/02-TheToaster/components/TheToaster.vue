@@ -1,13 +1,13 @@
 <template>
   <div class="toasts">
-    <div class="toast toast_success">
-      <ui-icon class="toast__icon" icon="check-circle" />
-      <span>Success Toast Example</span>
-    </div>
-
-    <div class="toast toast_error">
-      <ui-icon class="toast__icon" icon="alert-circle" />
-      <span>Error Toast Example</span>
+    <div
+      v-for="(item, index) in list"
+      :key="index"
+      class="toast"
+      :class="{ toast_success: item.type === 'success', toast_error: item.type === 'error' }"
+    >
+      <ui-icon class="toast__icon" :icon="item.icon" />
+      <span>{{ item.message }}</span>
     </div>
   </div>
 </template>
@@ -19,6 +19,44 @@ export default {
   name: 'TheToaster',
 
   components: { UiIcon },
+
+  data() {
+    return {
+      toastId: 0,
+      list: [],
+      timer: 5000,
+    };
+  },
+
+  methods: {
+    success(message) {
+      this.createToast({ message, type: 'success' });
+    },
+
+    error(message) {
+      this.createToast({ message, type: 'error' });
+    },
+
+    createToast({ message, type }) {
+      let toast = {};
+
+      toast.message = message;
+      toast.type = type;
+      toast.icon = this.toastIcon(type);
+      toast.id = this.toastId++;
+
+      this.list.push(toast);
+      this.toastDestroy(toast.id);
+    },
+
+    toastIcon(type) {
+      return type === 'success' ? 'check-circle' : 'alert-circle';
+    },
+
+    toastDestroy(id) {
+      setTimeout(() => (this.list = this.list.filter((item) => item.id !== id)), this.timer);
+    },
+  },
 };
 </script>
 
