@@ -1,18 +1,27 @@
 <template>
-  <div class="dropdown dropdown_opened">
-    <button type="button" class="dropdown__toggle dropdown__toggle_icon">
-      <ui-icon icon="tv" class="dropdown__icon" />
-      <span>Title</span>
+  <div class="dropdown" :class="{ dropdown_opened: active }">
+    <button
+      type="button"
+      class="dropdown__toggle"
+      :class="{ dropdown__toggle_icon: hasIcon }"
+      @click="active = !active"
+    >
+      <ui-icon v-if="hasIcon && currentItem" :icon="currentItem.icon" class="dropdown__icon" />
+      <span>{{ currentItem ? currentItem.text : title }}</span>
     </button>
 
-    <div class="dropdown__menu" role="listbox">
-      <button class="dropdown__item dropdown__item_icon" role="option" type="button">
-        <ui-icon icon="tv" class="dropdown__icon" />
-        Option 1
-      </button>
-      <button class="dropdown__item dropdown__item_icon" role="option" type="button">
-        <ui-icon icon="tv" class="dropdown__icon" />
-        Option 2
+    <div v-show="active" class="dropdown__menu" role="listbox">
+      <button
+        v-for="(item, index) in options"
+        :key="index"
+        class="dropdown__item"
+        :class="{ dropdown__item_icon: hasIcon }"
+        role="option"
+        type="button"
+        @click="choose(item)"
+      >
+        <ui-icon v-if="item.icon" :icon="item.icon" class="dropdown__icon" />
+        {{ item.text }}
       </button>
     </div>
   </div>
@@ -25,6 +34,31 @@ export default {
   name: 'UiDropdown',
 
   components: { UiIcon },
+
+  props: { options: Array, modelValue: String, title: String },
+
+  data() {
+    return {
+      active: false,
+    };
+  },
+
+  computed: {
+    currentItem() {
+      return this.options.find((item) => item.value === this.modelValue);
+    },
+    hasIcon() {
+      return !!this.options.find((item) => !!item.icon);
+    },
+  },
+
+  methods: {
+    choose(item) {
+      this.active = false;
+      this.$emit('update:modelValue', item.value);
+      this.currentItem = item;
+    },
+  },
 };
 </script>
 
