@@ -34,6 +34,9 @@ export default {
   methods: {
     handleSendSubmit() {
       this.send();
+      this.$nextTick(() => {
+        this.$refs.items[this.messages.length - 1].scrollIntoView();
+      });
     },
 
     send() {
